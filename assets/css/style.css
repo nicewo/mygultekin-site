@@ -35,3 +35,5 @@
 .mini-project>a:hover{color:var(--accent-light)}
 .project-footnote{font-size:10px;line-height:1.8;color:var(--soft);margin-top:18px;max-width:760px}
 @media(max-width:760px){.project-card{grid-template-columns:1fr 34px;gap:15px}.project-visual{grid-column:1/-1}.project-info{grid-column:1}.project-arrow,.project-links{grid-column:2;grid-row:2}.project-links{flex-direction:row;align-self:start}.project-mini-grid{grid-template-columns:1fr}.project-group-label{font-size:8px;margin-top:30px}.mini-project{min-height:200px}}
+
+.repo-note{font:9px var(--mono);color:var(--soft);margin-top:16px;letter-spacing:.02em}
