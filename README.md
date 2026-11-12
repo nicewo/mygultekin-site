@@ -11,12 +11,12 @@ Personal portfolio website of Muhammed Yusuf Gültekin, presenting work across s
 
 | Token | Color | Usage |
 |---|---|---|
-| Anthracite | `#171C22` | Primary background |
-| Electric Blue | `#00AFFF` | Primary accent |
-| Lightning Orange | `#FF7900` | Secondary accent |
-| Soft White | `#E8EDF2` | Main text |
+| Charcoal | `#17191E` | Primary background |
+| Burgundy | `#A6193D` | Primary brand accent |
+| Parliament Blue | `#234B75` | Technology accent |
+| Metallic Grey | `#C2C6CC` | Main text and logo contrast |
 
-The visual direction is technical, modern, and minimal, with a dark engineering-inspired interface.
+The visual direction is technical, modern, and minimal, with a charcoal dark interface and burgundy / parliament-blue identity.
 
 ## Focus areas
 
@@ -29,7 +29,7 @@ The visual direction is technical, modern, and minimal, with a dark engineering-
 
 ## Selected projects
 
-Project descriptions and links will be added as the portfolio is developed. Planned highlights include:
+The portfolio highlights verified public repositories and summarizes private engineering work without exposing private repository URLs. Current highlights include:
 
 - **VP100** — Integrated vision and PLC development platform
 - **EVAS** — Industrial data monitoring and analysis system
