@@ -2,7 +2,7 @@
   const canvas = document.getElementById("network");
   const ctx = canvas && canvas.getContext("2d");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let points = [], width = 0, height = 0, raf = 0;
+  let points = [], width = 0, height = 0, raf = 0, seededWidth = 0;
   const pointer = { x: -1000, y: -1000 };
 
   function resize() {
@@ -12,7 +12,10 @@
     canvas.width = width * dpr; canvas.height = height * dpr;
     canvas.style.width = width + "px"; canvas.style.height = height + "px";
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const count = Math.min(95, Math.max(34, Math.floor(width * height / 14500)));
+    // Mobilde adres çubuğu gizlenip açıldıkça yalnızca yükseklik değişir; ağı yeniden üretme.
+    if (width === seededWidth && points.length) { draw(); return; }
+    seededWidth = width;
+    const count = Math.min(95, Math.max(34, Math.floor(width * height / (width < 700 ? 22000 : 14500))));
     points = Array.from({ length: count }, () => ({
       x: Math.random() * width, y: Math.random() * height,
       vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25,
@@ -39,13 +42,13 @@
         const q = points[j], x = p.x - q.x, y = p.y - q.y, dist = Math.sqrt(x*x + y*y);
         if (dist < maxDistance) {
           const alpha = (1 - dist / maxDistance) * .23;
-          ctx.strokeStyle = p.orange || q.orange ? `rgba(138,41,70,${alpha * .65})` : `rgba(40,87,134,${alpha})`;
+          ctx.strokeStyle = p.orange || q.orange ? `rgba(166,25,61,${alpha * .8})` : `rgba(83,87,90,${alpha})`;
           ctx.lineWidth = .7; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke();
         }
       }
       ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle = p.orange ? "rgba(255,145,54,.72)" : "rgba(0,184,255,.7)";
-      ctx.shadowBlur = 8; ctx.shadowColor = p.orange ? "#8A2946" : "#285786"; ctx.fill(); ctx.shadowBlur = 0;
+      ctx.fillStyle = p.orange ? "rgba(166,25,61,.7)" : "rgba(83,87,90,.45)";
+      ctx.fill();
     }
     if (!reducedMotion) raf = requestAnimationFrame(draw);
   }
