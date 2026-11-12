@@ -1,0 +1,25 @@
+# Operating system
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Firebase local state and debug logs
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Dependencies and generated output
+node_modules/
+dist/
+.DS_Store
