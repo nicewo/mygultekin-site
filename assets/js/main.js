@@ -39,13 +39,13 @@
         const q = points[j], x = p.x - q.x, y = p.y - q.y, dist = Math.sqrt(x*x + y*y);
         if (dist < maxDistance) {
           const alpha = (1 - dist / maxDistance) * .23;
-          ctx.strokeStyle = p.orange || q.orange ? `rgba(255,121,0,${alpha * .65})` : `rgba(0,175,255,${alpha})`;
+          ctx.strokeStyle = p.orange || q.orange ? `rgba(138,41,70,${alpha * .65})` : `rgba(40,87,134,${alpha})`;
           ctx.lineWidth = .7; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke();
         }
       }
       ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
       ctx.fillStyle = p.orange ? "rgba(255,145,54,.72)" : "rgba(0,184,255,.7)";
-      ctx.shadowBlur = 8; ctx.shadowColor = p.orange ? "#ff7900" : "#00afff"; ctx.fill(); ctx.shadowBlur = 0;
+      ctx.shadowBlur = 8; ctx.shadowColor = p.orange ? "#8A2946" : "#285786"; ctx.fill(); ctx.shadowBlur = 0;
     }
     if (!reducedMotion) raf = requestAnimationFrame(draw);
   }
