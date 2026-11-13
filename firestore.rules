@@ -16,14 +16,24 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Panel notları — örnek işlem.
-    match /notes/{noteId} {
+    // Panel kartları: her kart bir uygulamaya/servise kısayol.
+    // Şifre veya anahtar SAKLANMAZ; sadece başlık, adres ve kopyalanacak komut.
+    function validApp(d) {
+      return d.keys().hasAll(['title', 'desc', 'url', 'command', 'tag', 'order', 'updatedAt'])
+        && d.keys().hasOnly(['title', 'desc', 'url', 'command', 'tag', 'order', 'updatedAt'])
+        && d.title is string && d.title.size() > 0 && d.title.size() <= 80
+        && d.desc is string && d.desc.size() <= 300
+        && d.url is string && d.url.size() <= 500
+        && (d.url == '' || d.url.matches('^(https?|ssh)://[^\\s]+$'))
+        && d.command is string && d.command.size() <= 300
+        && d.tag is string && d.tag.size() <= 30
+        && d.order is int && d.order >= 0 && d.order < 1000
+        && d.updatedAt == request.time;
+    }
+
+    match /apps/{appId} {
       allow read, delete: if isAdmin();
-      allow create, update: if isAdmin()
-        && request.resource.data.keys().hasOnly(['text', 'createdAt'])
-        && request.resource.data.text is string
-        && request.resource.data.text.size() > 0
-        && request.resource.data.text.size() <= 5000;
+      allow create, update: if isAdmin() && validApp(request.resource.data);
     }
 
     // Geri kalan her şey kapalı.

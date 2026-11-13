@@ -3,12 +3,16 @@
 const SDK = "https://www.gstatic.com/firebasejs/13.3.0";
 const $ = id => document.getElementById(id);
 const views = ["view-login", "view-denied", "view-panel"];
+const LOCAL = location.hostname === "localhost" || location.hostname === "127.0.0.1";
 
 function show(view) { views.forEach(v => { $(v).hidden = v !== view; }); }
 function status(text, isError = false) {
   const el = $("status");
   el.textContent = text;
   el.classList.toggle("error", isError);
+}
+function safeUrl(url) {
+  return /^(https?|ssh):\/\/\S+$/i.test(url) ? url : "";
 }
 
 async function loadConfig() {
@@ -40,11 +44,17 @@ async function main() {
   const authI = auth.getAuth(app);
   auth.useDeviceLanguage(authI);
   const db = fs.getFirestore(app);
+  if (LOCAL) {
+    // Local development with `firebase emulators:start` (auth + firestore + hosting).
+    auth.connectAuthEmulator(authI, "http://127.0.0.1:9099", { disableWarnings: true });
+    fs.connectFirestoreEmulator(db, "127.0.0.1", 8080);
+  }
   const provider = new auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: "select_account" });
 
   const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-  let unsubscribeNotes = null;
+  let unsubscribe = null;
+  let editingId = null;
 
   auth.getRedirectResult(authI).catch(err => status(`Giriş başarısız: ${err.code || err.message}`, true));
 
@@ -66,17 +76,20 @@ async function main() {
   const logout = () => auth.signOut(authI);
   $("btn-logout").addEventListener("click", logout);
   $("btn-logout-denied").addEventListener("click", logout);
-  $("btn-copy").addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText($("denied-uid").textContent); status("UID kopyalandı."); }
-    catch { status("Kopyalanamadı, UID'yi elle seç.", true); }
-  });
+  $("btn-copy").addEventListener("click", () => copy($("denied-uid").textContent, "UID kopyalandı."));
+
+  async function copy(text, okMessage) {
+    try { await navigator.clipboard.writeText(text); status(okMessage); }
+    catch { status("Kopyalanamadı, metni elle seç.", true); }
+  }
 
   auth.onAuthStateChanged(authI, async user => {
-    if (unsubscribeNotes) { unsubscribeNotes(); unsubscribeNotes = null; }
+    if (unsubscribe) { unsubscribe(); unsubscribe = null; }
     $("user-box").hidden = !user;
     if (!user) { show("view-login"); status(""); return; }
 
     $("user-name").textContent = user.displayName || user.email || "";
+    $("user-photo").hidden = !user.photoURL;
     if (user.photoURL) $("user-photo").src = user.photoURL;
 
     status("Yetki kontrol ediliyor…");
@@ -91,47 +104,102 @@ async function main() {
     }
 
     show("view-panel"); status("");
-    const q = fs.query(fs.collection(db, "notes"), fs.orderBy("createdAt", "desc"));
-    unsubscribeNotes = fs.onSnapshot(q, snap => renderNotes(snap.docs), err => status(`Notlar okunamadı: ${err.code}`, true));
+    const q = fs.query(fs.collection(db, "apps"), fs.orderBy("order"));
+    unsubscribe = fs.onSnapshot(q, snap => renderCards(snap.docs), err => status(`Kartlar okunamadı: ${err.code}`, true));
   });
 
-  function renderNotes(docs) {
-    const list = $("note-list");
-    list.replaceChildren();
-    $("note-empty").hidden = docs.length > 0;
-    for (const d of docs) {
-      const data = d.data();
-      const li = document.createElement("li");
-      const body = document.createElement("div");
-      const text = document.createElement("div");
-      text.className = "note-text";
-      text.textContent = data.text;
-      const date = document.createElement("span");
-      date.className = "note-date";
-      date.textContent = data.createdAt ? data.createdAt.toDate().toLocaleString("tr-TR") : "kaydediliyor…";
-      body.append(text, date);
-      const del = document.createElement("button");
-      del.type = "button";
-      del.className = "note-del";
-      del.textContent = "Sil";
-      del.setAttribute("aria-label", "Notu sil");
-      del.addEventListener("click", async () => {
-        if (!confirm("Bu not silinsin mi?")) return;
-        try { await fs.deleteDoc(d.ref); } catch (err) { status(`Silinemedi: ${err.code}`, true); }
-      });
-      li.append(body, del);
-      list.append(li);
-    }
+  // ---------- Cards ----------
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
   }
 
-  $("note-form").addEventListener("submit", async e => {
+  function renderCards(docs) {
+    const grid = $("app-grid");
+    grid.replaceChildren();
+    for (const d of docs) {
+      const a = d.data();
+      const card = el("article", "app-card");
+      card.append(el("div", "app-tag", a.tag || ""), el("h2", "", a.title));
+      if (a.desc) card.append(el("p", "app-desc", a.desc));
+      else card.append(el("p", "app-desc", ""));
+      if (a.command) card.append(el("div", "app-cmd", a.command));
+
+      const actions = el("div", "app-actions");
+      const url = safeUrl(a.url || "");
+      if (url) {
+        const link = el("a", "primary", "Aç ↗");
+        link.href = url;
+        if (/^https?:/i.test(url)) { link.target = "_blank"; link.rel = "noopener noreferrer"; }
+        actions.append(link);
+      }
+      if (a.command) {
+        const btn = el("button", url ? "" : "primary", "Komutu kopyala");
+        btn.type = "button";
+        btn.addEventListener("click", () => copy(a.command, "Komut kopyalandı."));
+        actions.append(btn);
+      }
+      card.append(actions);
+
+      const edit = el("div", "app-edit");
+      const bEdit = el("button", "", "DÜZENLE");
+      bEdit.type = "button";
+      bEdit.setAttribute("aria-label", `${a.title} kartını düzenle`);
+      bEdit.addEventListener("click", () => openForm(d.id, a));
+      const bDel = el("button", "", "SİL");
+      bDel.type = "button";
+      bDel.setAttribute("aria-label", `${a.title} kartını sil`);
+      bDel.addEventListener("click", async () => {
+        if (!confirm(`"${a.title}" kartı silinsin mi?`)) return;
+        try { await fs.deleteDoc(d.ref); status("Kart silindi."); }
+        catch (err) { status(`Silinemedi: ${err.code}`, true); }
+      });
+      edit.append(bEdit, bDel);
+      card.append(edit);
+      grid.append(card);
+    }
+    const add = el("button", "app-card app-add", "+ Yeni kart");
+    add.type = "button";
+    add.addEventListener("click", () => openForm(null, { order: (docs.length + 1) * 10 }));
+    grid.append(add);
+  }
+
+  function openForm(id, a) {
+    editingId = id;
+    $("app-form-title").textContent = id ? "KARTI DÜZENLE" : "YENİ KART";
+    $("f-title").value = a.title || "";
+    $("f-tag").value = a.tag || "";
+    $("f-order").value = a.order ?? 10;
+    $("f-desc").value = a.desc || "";
+    $("f-url").value = a.url || "";
+    $("f-command").value = a.command || "";
+    $("app-form-box").hidden = false;
+    $("app-form-box").scrollIntoView({ behavior: "smooth", block: "start" });
+    $("f-title").focus({ preventScroll: true });
+  }
+  function closeForm() { editingId = null; $("app-form-box").hidden = true; $("app-form").reset(); }
+  $("btn-cancel").addEventListener("click", closeForm);
+
+  $("app-form").addEventListener("submit", async e => {
     e.preventDefault();
-    const input = $("note-text");
-    const text = input.value.trim();
-    if (!text) return;
+    const url = $("f-url").value.trim();
+    if (url && !safeUrl(url)) { status("Adres https://, http:// veya ssh:// ile başlamalı.", true); $("f-url").focus(); return; }
+    const data = {
+      title: $("f-title").value.trim(),
+      tag: $("f-tag").value.trim(),
+      order: Math.max(0, Math.min(999, parseInt($("f-order").value, 10) || 0)),
+      desc: $("f-desc").value.trim(),
+      url,
+      command: $("f-command").value.trim(),
+      updatedAt: fs.serverTimestamp()
+    };
+    if (!data.title) return;
     try {
-      await fs.addDoc(fs.collection(db, "notes"), { text, createdAt: fs.serverTimestamp() });
-      input.value = ""; status("Kaydedildi.");
+      if (editingId) await fs.setDoc(fs.doc(db, "apps", editingId), data);
+      else await fs.addDoc(fs.collection(db, "apps"), data);
+      closeForm(); status("Kart kaydedildi.");
     } catch (err) { status(`Kaydedilemedi: ${err.code}`, true); }
   });
 }

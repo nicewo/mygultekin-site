@@ -122,4 +122,5 @@ Kurulu uygulamalara değişikliği hemen ulaştırmak için `sw.js` içindeki `C
 - Giriş: ana sayfada footer'daki **"DESIGNED & BUILT WITH PURPOSE."** yazısına 2 saniye içinde 5 kez dokun (veya doğrudan `/panel`).
 - Google ile giriş yapılır; yetki `firestore.rules` ile sunucu tarafında kontrol edilir. Sayfanın gizli olması güvenlik değildir, asıl koruma kurallardır.
 - İlk girişte panel hesabın **UID**'sini gösterir. Firebase konsolunda **Firestore → `admins`** koleksiyonuna belge kimliği bu UID olan boş bir belge ekle; sayfayı yenileyince panel açılır. Admin kaydı koddan yazılamaz.
-- Panel yalnızca Firebase Hosting'de (veya `firebase emulators:start`) çalışır; ayarları `/__/firebase/init.json` adresinden alır, repoda API anahtarı yoktur.
+- Panel yalnızca Firebase Hosting'de (veya `firebase emulators:start --project demo-myg`) çalışır; ayarları `/__/firebase/init.json` adresinden alır, repoda API anahtarı yoktur. Yerelde (`127.0.0.1:5000/panel`) otomatik olarak auth/firestore emülatörlerine bağlanır.
+- Panel kart tabanlıdır: her kart bir uygulamaya kısayoldur (başlık, etiket, açıklama, `https://`/`http://`/`ssh://` adres, kopyalanacak komut). Kartlar panelden eklenir/düzenlenir, Firestore `apps` koleksiyonunda durur. Kartlara şifre veya anahtar yazılmaz; kurallar fazladan alanı ve `javascript:` gibi adresleri reddeder.

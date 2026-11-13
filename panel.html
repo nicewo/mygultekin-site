@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/style.css">
   <style>
-    .panel-main{min-height:calc(100vh - 120px);padding:56px 0 80px;display:grid;align-content:start;gap:28px;max-width:760px}
+    .panel-main{min-height:calc(100vh - 120px);padding:48px 0 80px;display:grid;align-content:start;gap:24px}
     .panel-main h1{font-size:clamp(34px,6vw,52px);margin:0}
     .panel-box{background:var(--panel);border:1px solid var(--line);padding:28px;display:grid;gap:18px}
     .panel-box p{margin:0;color:var(--body);line-height:1.7}
@@ -24,16 +24,31 @@
     .panel-uid{font:500 13px var(--mono);background:var(--ink);border:1px solid var(--line);padding:12px 14px;word-break:break-all;color:var(--text)}
     .panel-status{font:500 13px var(--mono);color:var(--muted);min-height:20px}
     .panel-status.error{color:var(--accent-light)}
-    .panel-form{display:grid;gap:12px}
-    .panel-form label{font:500 12px var(--mono);letter-spacing:.12em;color:var(--muted)}
-    .panel-form textarea{min-height:110px;resize:vertical;background:var(--ink);color:var(--text);border:1px solid var(--line);padding:14px;font:15px/1.6 var(--sans)}
-    .panel-form textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
-    .note-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-    .note-list li{display:flex;gap:16px;justify-content:space-between;align-items:flex-start;background:var(--ink);border:1px solid var(--line);padding:14px 16px}
-    .note-text{white-space:pre-wrap;color:var(--text);line-height:1.6;font-size:15px}
-    .note-date{display:block;margin-top:6px;font:500 11px var(--mono);color:var(--soft)}
-    .note-del{background:none;border:1px solid var(--line);color:var(--muted);font:500 12px var(--mono);padding:10px 12px;cursor:pointer;min-height:44px}
-    .note-del:hover{color:var(--text);border-color:var(--accent)}
+    .panel-form{display:grid;gap:14px}
+    .panel-form label{display:grid;gap:7px;font:500 12px var(--mono);letter-spacing:.12em;color:var(--muted)}
+    .panel-form input,.panel-form textarea{background:var(--ink);color:var(--text);border:1px solid var(--line);padding:12px 14px;font:15px/1.5 var(--sans);letter-spacing:0;min-height:44px;box-sizing:border-box;width:100%}
+    .panel-form textarea{min-height:76px;resize:vertical}
+    .panel-form input:focus,.panel-form textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+    .panel-form .hint{font:400 12px var(--mono);letter-spacing:0;color:var(--soft)}
+    .panel-form-grid{display:grid;grid-template-columns:1fr 120px 90px;gap:14px}
+    .app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+    .app-card{background:var(--panel);border:1px solid var(--line);padding:22px;display:flex;flex-direction:column;gap:12px;min-height:190px;position:relative}
+    .app-card:hover{border-color:rgba(166,25,61,.55)}
+    .app-tag{font:500 11px var(--mono);letter-spacing:.14em;color:var(--accent-light);text-transform:uppercase;min-height:14px}
+    .app-card h2{margin:0;font-size:21px;line-height:1.25;color:var(--text)}
+    .app-desc{margin:0;color:var(--body);font-size:14px;line-height:1.6;flex:1}
+    .app-cmd{font:500 12px var(--mono);color:var(--muted);background:var(--ink);border:1px solid var(--line);padding:9px 11px;word-break:break-all}
+    .app-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .app-actions a,.app-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;font:600 13px var(--sans);text-decoration:none;cursor:pointer;border:1px solid var(--line);background:none;color:var(--text)}
+    .app-actions .primary{background:var(--accent);border-color:var(--accent);color:#fff}
+    .app-actions .primary:hover{background:var(--accent-dark)}
+    .app-actions button:hover,.app-actions a:not(.primary):hover{border-color:var(--accent)}
+    .app-edit{position:absolute;top:14px;right:14px;display:flex;gap:4px}
+    .app-edit button{background:none;border:0;color:var(--soft);font:500 11px var(--mono);letter-spacing:.08em;cursor:pointer;padding:8px 6px;min-height:32px}
+    .app-edit button:hover{color:var(--text)}
+    .app-add{border-style:dashed;align-items:center;justify-content:center;color:var(--muted);font:600 15px var(--sans);cursor:pointer;background:none}
+    .app-add:hover{color:var(--text);border-color:var(--accent)}
+    @media(max-width:600px){.panel-form-grid{grid-template-columns:1fr 1fr}.panel-form-grid label:first-child{grid-column:1/-1}}
     .panel-btn-plain{background:none;border:1px solid var(--line);color:var(--text);font:600 14px var(--sans);padding:12px 18px;cursor:pointer;min-height:44px}
     .panel-btn-plain:hover{border-color:var(--accent)}
     [hidden]{display:none!important}
@@ -68,19 +83,29 @@
       </section>
 
       <!-- Panel -->
-      <section id="view-panel" hidden style="display:grid;gap:28px">
-        <div class="panel-box">
-          <form class="panel-form" id="note-form">
-            <label for="note-text">YENİ NOT</label>
-            <textarea id="note-text" maxlength="5000" required></textarea>
-            <div class="panel-row"><button class="button button-primary" type="submit">Kaydet</button></div>
+      <section id="view-panel" hidden style="display:grid;gap:24px">
+        <div class="app-grid" id="app-grid"></div>
+
+        <div class="panel-box" id="app-form-box" hidden>
+          <form class="panel-form" id="app-form">
+            <p class="eyebrow" id="app-form-title" style="margin:0">YENİ KART</p>
+            <div class="panel-form-grid">
+              <label>BAŞLIK<input id="f-title" maxlength="80" required></label>
+              <label>ETİKET<input id="f-tag" maxlength="30" placeholder="SSH"></label>
+              <label>SIRA<input id="f-order" type="number" min="0" max="999" value="10" required></label>
+            </div>
+            <label>AÇIKLAMA<textarea id="f-desc" maxlength="300"></textarea></label>
+            <label>ADRES (AÇ BUTONU)<input id="f-url" maxlength="500" placeholder="https://…  veya  ssh://kullanici@adres" inputmode="url" autocapitalize="off" spellcheck="false">
+              <span class="hint">https://, http:// veya ssh:// ile başlamalı. Boş bırakılabilir.</span></label>
+            <label>KOMUT (KOPYALA BUTONU)<input id="f-command" maxlength="300" placeholder="ssh kullanici@adres" autocapitalize="off" spellcheck="false">
+              <span class="hint">Şifre veya anahtar yazma; burada sadece komut durur.</span></label>
+            <div class="panel-row">
+              <button class="button button-primary" type="submit">Kaydet</button>
+              <button class="panel-btn-plain" type="button" id="btn-cancel">Vazgeç</button>
+            </div>
           </form>
         </div>
-        <div class="panel-box">
-          <p class="panel-form"><label>NOTLAR</label></p>
-          <ul class="note-list" id="note-list"></ul>
-          <p id="note-empty" hidden>Henüz not yok.</p>
-        </div>
+
         <div class="panel-row"><button class="panel-btn-plain" id="btn-logout" type="button">Çıkış yap</button></div>
       </section>
     </main>
