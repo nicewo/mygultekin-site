@@ -84,4 +84,19 @@
     }), { threshold: .12 });
     revealTargets.forEach(el => observer.observe(el));
   } else revealTargets.forEach(el => el.classList.add("visible"));
+  // Hidden entry: 5 quick taps on the footer line open the private panel.
+  const mark = document.querySelector(".footer-mark");
+  if (mark) {
+    let taps = 0, timer = 0;
+    mark.addEventListener("click", () => {
+      taps += 1; clearTimeout(timer);
+      if (taps >= 5) { taps = 0; location.href = "/panel"; return; }
+      timer = setTimeout(() => { taps = 0; }, 2000);
+    });
+  }
+
+  // Installable app / offline support.
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
+  }
 })();

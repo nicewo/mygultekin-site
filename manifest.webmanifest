@@ -1,0 +1,21 @@
+{
+  "id": "/",
+  "name": "MYG Tech — Muhammed Yusuf Gültekin",
+  "short_name": "MYG Tech",
+  "description": "Yazılım, elektronik, gömülü sistemler ve endüstriyel otomasyon.",
+  "lang": "tr",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#17191E",
+  "theme_color": "#17191E",
+  "icons": [
+    { "src": "/assets/images/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/images/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/images/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Projeler", "url": "/#projects", "icons": [{ "src": "/assets/images/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
