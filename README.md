@@ -96,8 +96,7 @@ Site `https://myusufgultekin.web.app` adresinde yayınlanır (`firebase.json` �
 ```bash
 npm install -g firebase-tools
 firebase login
-firebase use --add                         # projeyi seç, alias: default
-firebase hosting:sites:create myusufgultekin   # proje kimliği zaten "myusufgultekin" ise gerekmez
+firebase hosting:sites:create myusufgultekin   # proje: mygultekin-1ce3f (.firebaserc)
 ```
 
 Firebase konsolunda:
