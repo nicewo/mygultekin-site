@@ -124,3 +124,9 @@ Kurulu uygulamalara değişikliği hemen ulaştırmak için `sw.js` içindeki `C
 - İlk girişte panel hesabın **UID**'sini gösterir. Firebase konsolunda **Firestore → `admins`** koleksiyonuna belge kimliği bu UID olan boş bir belge ekle; sayfayı yenileyince panel açılır. Admin kaydı koddan yazılamaz.
 - Panel yalnızca Firebase Hosting'de (veya `firebase emulators:start --project demo-myg`) çalışır; ayarları `/__/firebase/init.json` adresinden alır, repoda API anahtarı yoktur. Yerelde (`127.0.0.1:5000/panel`) otomatik olarak auth/firestore emülatörlerine bağlanır.
 - Panel kart tabanlıdır: her kart bir uygulamaya kısayoldur (başlık, etiket, açıklama, `https://`/`http://`/`ssh://` adres, kopyalanacak komut). Kartlar panelden eklenir/düzenlenir, Firestore `apps` koleksiyonunda durur. Kartlara şifre veya anahtar yazılmaz; kurallar fazladan alanı ve `javascript:` gibi adresleri reddeder.
+
+## vp100dev web terminali
+
+`ops/vp100dev-web-ssh.sh` vp100dev üzerinde `ttyd` (tarayıcı terminali, tmux oturumu) ve
+`tailscale serve` kurar. Terminal yalnızca Tailscale ağındaki cihazlardan `https://vp100dev.<tailnet>.ts.net`
+adresiyle açılır; internete açık değildir. Çıkan adres paneldeki karta yazılır. `ops/` klasörü yayına çıkmaz.

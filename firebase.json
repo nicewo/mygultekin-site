@@ -10,7 +10,8 @@
       "**/.*",
       "**/node_modules/**",
       "README.md",
-      "LICENSE"
+      "LICENSE",
+      "ops/**"
     ],
     "cleanUrls": true,
     "trailingSlash": false,
