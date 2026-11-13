@@ -128,5 +128,6 @@ Kurulu uygulamalara değişikliği hemen ulaştırmak için `sw.js` içindeki `C
 ## vp100dev web terminali
 
 `ops/vp100dev-web-ssh.sh` vp100dev üzerinde `ttyd` (tarayıcı terminali, tmux oturumu) ve
-`tailscale serve` kurar. Terminal yalnızca Tailscale ağındaki cihazlardan `https://vp100dev.<tailnet>.ts.net`
-adresiyle açılır; internete açık değildir. Çıkan adres paneldeki karta yazılır. `ops/` klasörü yayına çıkmaz.
+`tailscale serve` kurar. Yalnızca Tailscale ağındaki cihazlardan açılır, internete açık değildir:
+terminal `https://vp100dev.<tailnet>.ts.net`, VP100 PLC arayüzü `https://vp100dev.<tailnet>.ts.net:8443`
+(runtime `127.0.0.1:8080`, farklıysa `VP_PORT=<port>`). Çıkan adres paneldeki karta yazılır. `ops/` klasörü yayına çıkmaz.
