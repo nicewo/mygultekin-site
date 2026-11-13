@@ -1,8 +1,12 @@
 {
   "hosting": {
+    "site": "myusufgultekin",
     "public": ".",
     "ignore": [
       "firebase.json",
+      ".firebaserc",
+      "firestore.rules",
+      "firestore.indexes.json",
       "**/.*",
       "**/node_modules/**",
       "README.md",
@@ -18,11 +22,34 @@
         ]
       },
       {
-        "source": "**/*.@(png|jpg|jpeg|webp|woff2)",
+        "source": "**/*.@(png|jpg|jpeg|webp|woff2|ico)",
         "headers": [
           { "key": "Cache-Control", "value": "public,max-age=604800" }
         ]
+      },
+      {
+        "source": "/sw.js",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache" }
+        ]
+      },
+      {
+        "source": "/manifest.webmanifest",
+        "headers": [
+          { "key": "Content-Type", "value": "application/manifest+json" },
+          { "key": "Cache-Control", "value": "no-cache" }
+        ]
+      },
+      {
+        "source": "/panel",
+        "headers": [
+          { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+          { "key": "Cache-Control", "value": "no-store" }
+        ]
       }
     ]
+  },
+  "firestore": {
+    "rules": "firestore.rules"
   }
 }

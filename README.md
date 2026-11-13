@@ -86,3 +86,41 @@ The source code is available under the MIT License. The MYG name and logo, perso
 ---
 
 Built by **Muhammed Yusuf Gültekin**.
+
+## Yayın (Firebase Hosting)
+
+Site `https://myusufgultekin.web.app` adresinde yayınlanır (`firebase.json` → `"site": "myusufgultekin"`).
+
+İlk kurulum (bir kez):
+
+```bash
+npm install -g firebase-tools
+firebase login
+firebase use --add                         # projeyi seç, alias: default
+firebase hosting:sites:create myusufgultekin   # proje kimliği zaten "myusufgultekin" ise gerekmez
+```
+
+Firebase konsolunda:
+
+1. **Authentication → Sign-in method → Google** sağlayıcısını aç.
+2. **Authentication → Settings → Authorized domains** listesine `myusufgultekin.web.app` ekle.
+3. **Firestore Database** oluştur (production mode, bölge: `europe-west3` gibi yakın bir bölge).
+
+Yayına alma:
+
+```bash
+firebase deploy --only hosting,firestore:rules
+```
+
+## Uygulama olarak kurma (PWA)
+
+`manifest.webmanifest` + `sw.js` ile site telefona kurulabilir:
+Android Chrome → menü → **Uygulamayı yükle**, iPhone Safari → Paylaş → **Ana Ekrana Ekle**.
+Kurulu uygulamalara değişikliği hemen ulaştırmak için `sw.js` içindeki `CACHE` sürümünü artır.
+
+## Gizli panel
+
+- Giriş: ana sayfada footer'daki **"DESIGNED & BUILT WITH PURPOSE."** yazısına 2 saniye içinde 5 kez dokun (veya doğrudan `/panel`).
+- Google ile giriş yapılır; yetki `firestore.rules` ile sunucu tarafında kontrol edilir. Sayfanın gizli olması güvenlik değildir, asıl koruma kurallardır.
+- İlk girişte panel hesabın **UID**'sini gösterir. Firebase konsolunda **Firestore → `admins`** koleksiyonuna belge kimliği bu UID olan boş bir belge ekle; sayfayı yenileyince panel açılır. Admin kaydı koddan yazılamaz.
+- Panel yalnızca Firebase Hosting'de (veya `firebase emulators:start`) çalışır; ayarları `/__/firebase/init.json` adresinden alır, repoda API anahtarı yoktur.

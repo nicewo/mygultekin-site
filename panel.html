@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#17191E">
+  <title>Panel | MYG Tech</title>
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    .panel-main{min-height:calc(100vh - 120px);padding:56px 0 80px;display:grid;align-content:start;gap:28px;max-width:760px}
+    .panel-main h1{font-size:clamp(34px,6vw,52px);margin:0}
+    .panel-box{background:var(--panel);border:1px solid var(--line);padding:28px;display:grid;gap:18px}
+    .panel-box p{margin:0;color:var(--body);line-height:1.7}
+    .panel-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .panel-user{display:flex;align-items:center;gap:12px;font:500 13px var(--mono);color:var(--muted)}
+    .panel-user img{width:36px;height:36px;border-radius:50%}
+    .panel-uid{font:500 13px var(--mono);background:var(--ink);border:1px solid var(--line);padding:12px 14px;word-break:break-all;color:var(--text)}
+    .panel-status{font:500 13px var(--mono);color:var(--muted);min-height:20px}
+    .panel-status.error{color:var(--accent-light)}
+    .panel-form{display:grid;gap:12px}
+    .panel-form label{font:500 12px var(--mono);letter-spacing:.12em;color:var(--muted)}
+    .panel-form textarea{min-height:110px;resize:vertical;background:var(--ink);color:var(--text);border:1px solid var(--line);padding:14px;font:15px/1.6 var(--sans)}
+    .panel-form textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+    .note-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+    .note-list li{display:flex;gap:16px;justify-content:space-between;align-items:flex-start;background:var(--ink);border:1px solid var(--line);padding:14px 16px}
+    .note-text{white-space:pre-wrap;color:var(--text);line-height:1.6;font-size:15px}
+    .note-date{display:block;margin-top:6px;font:500 11px var(--mono);color:var(--soft)}
+    .note-del{background:none;border:1px solid var(--line);color:var(--muted);font:500 12px var(--mono);padding:10px 12px;cursor:pointer;min-height:44px}
+    .note-del:hover{color:var(--text);border-color:var(--accent)}
+    .panel-btn-plain{background:none;border:1px solid var(--line);color:var(--text);font:600 14px var(--sans);padding:12px 18px;cursor:pointer;min-height:44px}
+    .panel-btn-plain:hover{border-color:var(--accent)}
+    [hidden]{display:none!important}
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="MYG Tech ana sayfa"><img src="/assets/images/myg-tech-logo.svg" width="182" height="54" alt="MYG Tech"></a>
+      <div class="panel-user" id="user-box" hidden><img id="user-photo" alt="" referrerpolicy="no-referrer"><span id="user-name"></span></div>
+    </header>
+
+    <main class="panel-main">
+      <p class="eyebrow">PRIVATE / PANEL</p>
+      <h1>Yönetim paneli</h1>
+      <p class="panel-status" id="status" role="status">Yükleniyor…</p>
+
+      <!-- Giriş -->
+      <section class="panel-box" id="view-login" hidden>
+        <p>Bu alan sadece yetkili Google hesabıyla açılır.</p>
+        <div class="panel-row"><button class="button button-primary" id="btn-login" type="button">Google ile giriş yap</button></div>
+      </section>
+
+      <!-- Yetkisiz hesap -->
+      <section class="panel-box" id="view-denied" hidden>
+        <p>Bu hesap için panel yetkisi yok. Bu hesabı yetkilendirmek için Firebase konsolunda <strong>Firestore → admins</strong> koleksiyonuna, belge kimliği aşağıdaki UID olan boş bir belge ekle, sonra sayfayı yenile.</p>
+        <div class="panel-uid" id="denied-uid"></div>
+        <div class="panel-row">
+          <button class="panel-btn-plain" id="btn-copy" type="button">UID'yi kopyala</button>
+          <button class="panel-btn-plain" id="btn-logout-denied" type="button">Çıkış yap</button>
+        </div>
+      </section>
+
+      <!-- Panel -->
+      <section id="view-panel" hidden style="display:grid;gap:28px">
+        <div class="panel-box">
+          <form class="panel-form" id="note-form">
+            <label for="note-text">YENİ NOT</label>
+            <textarea id="note-text" maxlength="5000" required></textarea>
+            <div class="panel-row"><button class="button button-primary" type="submit">Kaydet</button></div>
+          </form>
+        </div>
+        <div class="panel-box">
+          <p class="panel-form"><label>NOTLAR</label></p>
+          <ul class="note-list" id="note-list"></ul>
+          <p id="note-empty" hidden>Henüz not yok.</p>
+        </div>
+        <div class="panel-row"><button class="panel-btn-plain" id="btn-logout" type="button">Çıkış yap</button></div>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="/assets/js/panel.js"></script>
+</body>
+</html>
