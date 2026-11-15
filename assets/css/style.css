@@ -49,3 +49,5 @@
 .vision-target i:nth-child(2){top:-1px;right:-1px;border-width:2px 2px 0 0}
 .vision-target i:nth-child(3){bottom:-1px;left:-1px;border-width:0 0 2px 2px}
 .vision-target b{font:10px var(--mono);letter-spacing:.2em;color:#d6dce4}
+/* Panel link (only on devices that signed in to the panel before) */
+.nav .nav-panel{color:var(--accent-light);font-family:var(--mono);letter-spacing:.08em}

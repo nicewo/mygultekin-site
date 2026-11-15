@@ -95,6 +95,15 @@
     });
   }
 
+  // Bu cihazda daha once panele yonetici olarak girildiyse menude "Panel" goster.
+  let knownAdmin = false;
+  try { knownAdmin = localStorage.getItem("myg.panel") === "1"; } catch {}
+  if (knownAdmin && nav && !nav.querySelector(".nav-panel")) {
+    const link = document.createElement("a");
+    link.href = "/panel"; link.className = "nav-panel"; link.textContent = "Panel";
+    nav.insertBefore(link, nav.querySelector(".nav-contact"));
+  }
+
   // Installable app / offline support.
   if ("serviceWorker" in navigator && location.protocol === "https:") {
     window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));

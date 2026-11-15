@@ -11,6 +11,11 @@ function status(text, isError = false) {
   el.textContent = text;
   el.classList.toggle("error", isError);
 }
+// Bu cihazda yonetici girisi yapildiysa ana sayfada "Panel" dugmesi gosterilsin.
+// Yalnizca kolaylik: asil koruma Google girisi + firestore.rules.
+function remember(on) {
+  try { on ? localStorage.setItem("myg.panel", "1") : localStorage.removeItem("myg.panel"); } catch {}
+}
 function safeUrl(url) {
   return /^(https?|ssh):\/\/\S+$/i.test(url) ? url : "";
 }
@@ -86,7 +91,7 @@ async function main() {
   auth.onAuthStateChanged(authI, async user => {
     if (unsubscribe) { unsubscribe(); unsubscribe = null; }
     $("user-box").hidden = !user;
-    if (!user) { show("view-login"); status(""); return; }
+    if (!user) { show("view-login"); status(""); remember(false); return; }
 
     $("user-name").textContent = user.displayName || user.email || "";
     $("user-photo").hidden = !user.photoURL;
@@ -98,11 +103,13 @@ async function main() {
     catch (err) { console.warn(err); }
 
     if (!isAdmin) {
+      remember(false);
       $("denied-uid").textContent = user.uid;
       show("view-denied"); status("");
       return;
     }
 
+    remember(true);
     show("view-panel"); status("");
     const q = fs.query(fs.collection(db, "apps"), fs.orderBy("order"));
     unsubscribe = fs.onSnapshot(q, snap => renderCards(snap.docs), err => status(`Kartlar okunamadı: ${err.code}`, true));
