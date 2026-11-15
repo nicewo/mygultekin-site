@@ -1,6 +1,6 @@
 /* MYG Tech service worker — offline support for the public site.
    Bump CACHE when shipping changes that must reach installed apps immediately. */
-const CACHE = "myg-v1";
+const CACHE = "myg-v2";
 const CORE = [
   "/",
   "/404.html",
