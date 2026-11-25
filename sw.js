@@ -1,12 +1,12 @@
 /* MYG Tech service worker — offline support for the public site.
    Bump CACHE when shipping changes that must reach installed apps immediately. */
-const CACHE = "myg-v4";
+const CACHE = "myg-v5";
 const CORE = [
   "/",
   "/404.html",
   "/manifest.webmanifest",
-  "/assets/css/style.css?v=4",
-  "/assets/js/main.js?v=4",
+  "/assets/css/style.css?v=5",
+  "/assets/js/main.js?v=5",
   "/assets/images/myg-tech-logo.svg",
   "/assets/images/myg-monogram.svg",
   "/assets/images/favicon.svg",
