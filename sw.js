@@ -1,16 +1,18 @@
 /* MYG Tech service worker — offline support for the public site.
    Bump CACHE when shipping changes that must reach installed apps immediately. */
-const CACHE = "myg-v3";
+const CACHE = "myg-v4";
 const CORE = [
   "/",
   "/404.html",
   "/manifest.webmanifest",
-  "/assets/css/style.css?v=3",
-  "/assets/js/main.js?v=3",
+  "/assets/css/style.css?v=4",
+  "/assets/js/main.js?v=4",
   "/assets/images/myg-tech-logo.svg",
   "/assets/images/myg-monogram.svg",
   "/assets/images/favicon.svg",
-  "/assets/images/icon-192.png"
+  "/assets/images/icon-192.png",
+  "/assets/images/myg-electrical-icon.webp",
+  "/assets/images/myg-electrical-icon.png"
 ];
 
 self.addEventListener("install", event => {
@@ -38,7 +40,8 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // Never touch other origins, Firebase reserved URLs or the private panel.
+  // Never touch other origins (GitHub API / release downloads go straight to the network),
+  // Firebase reserved URLs or the private panel.
   if (url.origin !== location.origin) return;
   if (url.pathname.startsWith("/__/") || url.pathname.startsWith("/panel")) return;
 
