@@ -51,3 +51,32 @@
 .vision-target b{font:10px var(--mono);letter-spacing:.2em;color:#d6dce4}
 /* Panel link (only on devices that signed in to the panel before) */
 .nav .nav-panel{color:var(--accent-light);font-family:var(--mono);letter-spacing:.08em}
+
+/* Product: MYG Electrical (downloadable free software) */
+.product-list{margin-bottom:6px}
+.product-card{grid-template-columns:25% 1fr;align-items:start}
+.product-visual{height:auto;min-height:260px;align-self:stretch;background:radial-gradient(circle at 50% 46%,rgba(35,75,117,.38),transparent 60%),#161b22}
+.product-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(91,132,177,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(91,132,177,.09) 1px,transparent 1px);background-size:18px 18px;mask-image:radial-gradient(ellipse,black 20%,transparent 75%)}
+.product-icon-glow{position:absolute;width:170px;height:170px;border-radius:50%;background:rgba(49,87,127,.35);filter:blur(45px)}
+.product-icon{position:relative;z-index:1;display:block;transition:transform .35s ease}
+.product-icon img{display:block;width:128px;height:128px;border-radius:26px;box-shadow:0 18px 40px rgba(0,0,0,.45),0 0 0 1px rgba(193,200,208,.12)}
+.product-card:hover .product-icon{transform:translateY(-4px) scale(1.03)}
+.status-free{color:#9DB8D6}
+.status-free i{background:#4F86BF;box-shadow:0 0 8px rgba(79,134,191,.7)}
+.release-badge{color:var(--soft)}
+.release-badge b{color:var(--text);font-weight:500;margin-left:6px}
+.release-badge em{font-style:normal;color:var(--soft);margin-left:8px}
+.release-badge em:empty{display:none}
+.product-features{list-style:none;padding:0;margin:0 0 18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px 18px;max-width:720px}
+.product-features li{position:relative;padding-left:14px;font-size:11px;line-height:1.55;color:var(--body)}
+.product-features li:before{content:"";position:absolute;left:0;top:.6em;width:5px;height:5px;background:var(--accent);transform:rotate(45deg)}
+.product-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 14px;margin-top:22px}
+.product-actions .button{gap:16px}
+.product-history{margin-top:0;margin-left:6px}
+.project-info p.release-note{font:10px/1.7 var(--mono);color:var(--soft);margin:16px 0 0;max-width:680px;letter-spacing:.02em}
+.release-note b{color:var(--body);font-weight:500}
+.project-info p.product-meta{font-size:10px;line-height:1.75;color:var(--soft);margin:12px 0 0;max-width:720px}
+.product-meta em{font-style:normal;color:var(--body)}
+@media(max-width:1000px){.product-features{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.product-card{grid-template-columns:1fr}.product-visual{min-height:200px;height:200px}.product-icon img{width:104px;height:104px;border-radius:22px}.product-features{grid-template-columns:1fr 1fr;gap:6px 12px}.product-features li{font-size:10.5px}.product-actions{flex-direction:column;align-items:stretch}.product-actions .button{width:100%;justify-content:space-between}.product-history{margin:6px 0 0;align-self:flex-start}}
+@media(max-width:420px){.product-features{grid-template-columns:1fr}}
