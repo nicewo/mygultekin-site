@@ -1,11 +1,19 @@
+<div align="center">
+  <a href="https://myusufgultekin.web.app/"><img src="./assets/myg-project-banner.svg" alt="MYG PORTFOLIO — MYG Tech" width="100%"></a>
+  <p><a href="https://myusufgultekin.web.app/"><img src="https://img.shields.io/badge/LIVE-WEBSITE-16A34A?style=for-the-badge&logo=firebase&logoColor=white" alt="Live website"></a> <img src="https://img.shields.io/badge/HTML5-CSS3-JAVASCRIPT-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="Web technologies"> <img src="https://img.shields.io/badge/FIREBASE-HOSTING-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase"></p>
+  <p><a href="https://myusufgultekin.web.app/">MYG TECH</a> · <a href="https://github.com/nicewo">GitHub Profile</a></p>
+</div>
+
+---
+
 # MYG — Muhammed Yusuf Gültekin
 
 **Software & Electronics Engineer**
 
 Personal portfolio website of Muhammed Yusuf Gültekin, presenting work across software development, embedded systems, electronics, and industrial automation.
 
-🌐 **Planned website:** [mygultekin.com](https://mygultekin.com)  
-🚧 **Current status:** Initial static website development
+🌐 **Live website:** [myusufgultekin.web.app](https://myusufgultekin.web.app)  
+**Status:** Published on Firebase Hosting
 
 ## Brand identity
 
@@ -67,7 +75,7 @@ Then visit [http://localhost:5500](http://localhost:5500).
 
 ## Deployment
 
-The initial deployment target is Firebase Hosting. The live URL will be documented here after deployment. A custom domain can be connected later.
+The site is deployed on Firebase Hosting at [myusufgultekin.web.app](https://myusufgultekin.web.app). A custom domain can be connected separately.
 
 ## Repository structure
 
