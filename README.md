@@ -35,6 +35,15 @@ The portfolio highlights verified public repositories and summarizes private eng
 - **EVAS** — Industrial data monitoring and analysis system
 - **MYG RideR** — GPS-based motorcycle tracking application
 
+### Products (free downloads)
+
+- **MYG Electrical** — free Windows IEC electrical schematic software ([source](https://github.com/nicewo/MYG.Electrical), [releases](https://github.com/nicewo/MYG.Electrical/releases)).
+  The download button always points to `releases/latest/download/MYG.Electrical-win-Setup.exe`.
+  The version badge is filled client-side from the GitHub Releases API (`releases/latest`, drafts/prereleases ignored),
+  cached in `localStorage` for 6 h and retried no sooner than 30 min after an error / rate limit.
+  Until the API answers, the cached or last-known version (`RELEASE_FALLBACK` in `assets/js/main.js`) is shown;
+  update that constant occasionally. No backend is involved.
+
 ## Technology
 
 The first release is intentionally built with plain web technologies:

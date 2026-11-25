@@ -104,6 +104,84 @@
     nav.insertBefore(link, nav.querySelector(".nav-contact"));
   }
 
+  // Ürün kartları: son kararlı GitHub Release bilgisini dinamik göster.
+  // Sayfa API'yi beklemez: önce önbellek / son bilinen sürüm basılır, API yanıtı gelince güncellenir.
+  // Hata, zaman aşımı veya rate limit durumunda kart olduğu gibi kalır; indirme bağlantısı her zaman sabittir.
+  const RELEASE_FALLBACK = {
+    "nicewo/MYG.Electrical": { tag: "v0.2.5", date: "2026-11-25T14:16:25Z", note: "", known: true }
+  };
+  const RELEASE_TTL = 6 * 60 * 60 * 1000;      // başarılı yanıt 6 saat önbellekte
+  const RELEASE_RETRY = 30 * 60 * 1000;        // hata / rate limit sonrası 30 dk tekrar deneme
+  const TAG_RE = /^v?\d+(\.\d+){1,3}([-+.][0-9A-Za-z.-]+)?$/;
+
+  const readCache = key => { try { return JSON.parse(localStorage.getItem(key) || "null"); } catch { return null; } };
+  const writeCache = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch {} };
+
+  function releaseSummary(body) {
+    if (typeof body !== "string") return "";
+    const line = body.split(/\r?\n/).map(l => l.replace(/[#*_`>\[\]]/g, "").replace(/^\s*[-+]\s+/, "").trim()).find(Boolean) || "";
+    return line.length > 160 ? line.slice(0, 157).trimEnd() + "…" : line;
+  }
+
+  function formatDate(iso) {
+    const d = new Date(iso);
+    if (isNaN(d)) return "";
+    try { return new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "long", year: "numeric" }).format(d); }
+    catch { return d.toISOString().slice(0, 10); }
+  }
+
+  function renderRelease(card, info) {
+    if (!info || !TAG_RE.test(info.tag || "")) return;
+    const tag = card.querySelector("[data-release-tag]");
+    const date = card.querySelector("[data-release-date]");
+    const note = card.querySelector("[data-release-note]");
+    const badge = card.querySelector("[data-release-version]");
+    if (tag) tag.textContent = info.tag;
+    if (date) date.textContent = formatDate(info.date);
+    if (badge) badge.title = info.known ? "Son bilinen sürüm (GitHub'a şu an ulaşılamadı)" : "GitHub Releases üzerindeki son kararlı sürüm";
+    if (note) {
+      note.textContent = "";
+      if (info.note) {
+        const b = document.createElement("b"); b.textContent = info.tag + " notu: ";
+        note.append(b, info.note); note.hidden = false;
+      } else note.hidden = true;
+    }
+  }
+
+  async function fetchRelease(repo) {
+    const ctrl = "AbortController" in window ? new AbortController() : null;
+    const timer = ctrl ? setTimeout(() => ctrl.abort(), 6000) : 0;
+    try {
+      const res = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
+        headers: { Accept: "application/vnd.github+json" }, cache: "no-store", signal: ctrl ? ctrl.signal : undefined
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status); // 403/429 = rate limit, 404 = henüz release yok
+      const data = await res.json();
+      if (!data || data.draft || data.prerelease || !TAG_RE.test(data.tag_name || "")) throw new Error("Geçersiz release");
+      return { tag: data.tag_name, date: data.published_at || data.created_at || "", note: releaseSummary(data.body) };
+    } finally { clearTimeout(timer); }
+  }
+
+  function initReleaseCard(card) {
+    const repo = card.getAttribute("data-release-repo");
+    if (!repo) return;
+    const key = "myg.release." + repo;
+    const cached = readCache(key);
+    // Anında: önbellekteki veya son bilinen sürümü göster.
+    renderRelease(card, (cached && cached.info) || RELEASE_FALLBACK[repo]);
+    const now = Date.now();
+    if (cached && cached.info && now - (cached.at || 0) < RELEASE_TTL) return;
+    if (cached && cached.failedAt && now - cached.failedAt < RELEASE_RETRY) return;
+    // Sonra: ilk boyamayı ve sayfa yüklemesini engellemeden, boşta API'yi sorgula.
+    const refresh = () => fetchRelease(repo)
+      .then(info => { writeCache(key, { info, at: Date.now() }); renderRelease(card, info); })
+      .catch(() => writeCache(key, { info: cached && cached.info, at: cached && cached.at, failedAt: Date.now() }));
+    if ("requestIdleCallback" in window) requestIdleCallback(refresh, { timeout: 2500 });
+    else setTimeout(refresh, 300);
+  }
+
+  document.querySelectorAll("[data-release-repo]").forEach(initReleaseCard);
+
   // Installable app / offline support.
   if ("serviceWorker" in navigator && location.protocol === "https:") {
     window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
