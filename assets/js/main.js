@@ -182,6 +182,14 @@
 
   document.querySelectorAll("[data-release-repo]").forEach(initReleaseCard);
 
+  // İletişim bağlantıları: adresler HTML'de ters yazılı durur, basit e-posta toplayıcılarını zorlaştırır.
+  document.querySelectorAll("[data-contact]").forEach(a => {
+    const v = (a.getAttribute("data-u") || "").split("").reverse().join("");
+    if (!v) return;
+    if (a.getAttribute("data-contact") === "mail") { a.href = "mailto:" + v; a.textContent = v; }
+    else a.href = "tel:" + v;
+  });
+
   // Installable app / offline support.
   if ("serviceWorker" in navigator && location.protocol === "https:") {
     window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
